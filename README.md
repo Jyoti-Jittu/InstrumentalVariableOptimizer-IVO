@@ -1,4 +1,4 @@
-# Genomics-to-Causality
+# InstrumentalVariableOptimizer(IVO)
 
 ## Prerequisite
 **R - 4.3.2** <br />
