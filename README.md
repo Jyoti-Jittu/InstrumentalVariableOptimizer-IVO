@@ -12,12 +12,15 @@
 
 ## Content
 
-**single_sample_dataset.R** <br />
+**single_sample_dataset_IVO.R** <br />
 Preprocessing and MR analysis of single-sample genotype data (America)
 
-**two_sample_datasets.R** <br />
+**two_sample_datasets_IVO.R** <br />
 Retrieval and MR analysis of two-sample MR datasets-
   - Total cholesterol and CAD (East Asia)
   - Liver iron content and Liver cancer (Europe)
   - Childhood obesity and Knee and hip osteoarthritis (Europe)
   - Total cholesterol and CAD (Europe)
+
+**IVO.R** <br />
+InstrumentalVariableOptimizer function to calculate t-statistics and select optimized instrumental variables
