@@ -6,6 +6,11 @@ library(TwoSampleMR)
 library(MRPRESSO)
 library(snpStats)
 library(ggplot2)
+source("LinearR.R")
+source("logisticR.R")
+source("mr_simex.R")
+source("IVO.R")
+
 for(pkg in c("snpStats", "doParallel", "SNPRelate","GenABEL" )){
   if(!require(pkg, character.only = T)) {
     stop("At least one pckg is required for this script. Please install it on your system.")
@@ -31,7 +36,6 @@ gc()
 phenodata <- data.frame("id" = Phenotype$id,"phenotype" = Phenotype$phenotype, stringsAsFactors = F)
 
 ############ Linear Regression (Total Chol) ############
-source("LinearR.R")
 target <- "chl_ld_.3"
 
 start <- Sys.time()
@@ -41,7 +45,6 @@ Sys.time() - start
 
 
 ########### Logistic Regression (CAD) ###########
-source("logisticR.R")
 target <- "CAD_ld_.3"
 
 trait <- read.csv("GWAStutorial_clinical.csv")
@@ -145,35 +148,27 @@ outc_LD <- clump_data(outc, clump_kb = 10000, clump_r2 = 0.01, pop = "AMR") # 40
 ####### Default parameter for MR comparison ####
 default_har <- harmonise_data(expo_LD, outc_LD[1:13]) # 679 30
 dafault_mr <- mr(default_har)
-######## Calculate t-value #######
-expo_LD$t_value <- expo_LD$beta.exposure/expo_LD$se.exposure
-outc_LD$t_value <- outc_LD$beta.outcome/outc_LD$se.outcome
 
-########### t-value threshold ##########
-t_avg_exp <- mean(abs(expo_LD$t_value)) # 1.396885
-t_avg_out <- mean(abs(outc_LD$t_value)) # 1.3766
+######## Apply InstrumentalVariableOptimizer ####
+exp_t <- IVO(expo_LD) # 988  14
+out_t <- IVO(outc_LD) #  959  15
 
-
-exp_t <- expo_LD[expo_LD$t_value>t_avg_exp,] # 988  14
-out_t <- outc_LD[outc_LD$t_value>t_avg_out,] # 959  15
 
 # Harmonised data
 dat_t <- harmonise_data(exp_t , out_t[1:13]) # 26 31
 
 
 ## MR Egger SIMEX ######
-library(simex)
-source("mr_simex.R")
+sim_mr <- mr_simex(harmo_dat = dat_t)
+
 ##### Mendelian randomisation ######
 mr_res_t <- mr(dat_t)
-sim_mr <- mr_simex(harmo_dat = dat_t)
 
 ########### directionality ######
 directionality_test(dat_t) # TRUE
 
 # Scatter Plot
 mr_scatter_plot(mr_res_t, dat_t)
-
 
 #Leave-one-out analysis (mr_ivw)
 mr_loo_tc <- mr_leaveoneout(dat_t)
@@ -183,9 +178,4 @@ mr_leaveoneout_plot(mr_loo_tc)
 res1_single <- mr_singlesnp(dat_t, all_method=c("mr_ivw", "mr_egger_regression"))
 mr_forest_plot(res1_single)
 
-
-
-
-
-
-
+gc()
