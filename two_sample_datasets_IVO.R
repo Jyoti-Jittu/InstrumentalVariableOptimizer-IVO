@@ -39,6 +39,7 @@ dat_t <- harmonise_data(expo_LD , outc_LD[1:13] ) # 41 33
 
 mr_res_t <- mr(dat_t)
 sim_mr <- mr_simex(harmo_dat = dat_t)
+# Apply all MR methods
 
 # Directionality
 dir_mr <- directionality_test(dat_t)
@@ -75,7 +76,8 @@ o_LD <- clump_data(ot, pop = "EUR") # 5 24
 ht <- harmonise_data(e_LD, o_LD[1:13]) # 5
 mr_default <- mr(ht)
 sim_mr <- mr_simex(harmo_dat = ht)
-
+all_LIC_LCC <- mr_wrapper(dat_t)
+sum(all_LIC_LCC$`ebi-a-GCST90016674.ieu-b-4953`$snps_retained$steiger==T) # 14
 # Proposed Pipeline
 
 exposure_dat <- extract_instruments("ebi-a-GCST90016674", p1 = 5e-03, r2 = 0.01) # 4233 15
