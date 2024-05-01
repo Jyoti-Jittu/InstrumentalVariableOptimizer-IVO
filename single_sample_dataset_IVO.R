@@ -163,7 +163,9 @@ sim_mr <- mr_simex(harmo_dat = dat_t)
 
 ##### Mendelian randomisation ######
 mr_res_t <- mr(dat_t)
-
+# Apply all MR methods
+all_ss <- mr_wrapper(dat_t)
+all_ss$chl.CAD$snps_retained$SNP[ss_moe$chl.CAD$snps_retained$steiger==T] # 74
 ########### directionality ######
 directionality_test(dat_t) # TRUE
 
